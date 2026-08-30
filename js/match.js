@@ -75,52 +75,58 @@ function scoreRecord(r, keyIdx, f, ctx, meta) {
   const activeAud = [];
   if (f.crowds.size) {
     const crowdArr = K("crowd") || [];
+    const hasData = crowdArr.some((v) => (v || 0) > 0);
     let s = 0;
-    meta.crowd_list.forEach((k, i) => { if (f.crowds.has(k)) s += (crowdArr[i] || 0) / 1000; });
-    activeAud.push(s);
-    if (s > 0.05) reasons.push(`目标人群占比 ${(s * 100).toFixed(0)}%`);
+    if (hasData) meta.crowd_list.forEach((k, i) => { if (f.crowds.has(k)) s += (crowdArr[i] || 0) / 1000; });
+    activeAud.push(hasData ? s : 0.5);
+    if (hasData && s > 0.05) reasons.push(`目标人群占比 ${(s * 100).toFixed(0)}%`);
   }
   if (f.ages.size) {
     const ageArr = K("age") || [];
+    const hasData = ageArr.some((v) => (v || 0) > 0);
     let s = 0;
-    meta.age_list.forEach((k, i) => { if (f.ages.has(k)) s += (ageArr[i] || 0) / 1000; });
-    activeAud.push(s);
-    if (s > 0.05) reasons.push(`目标年龄占比 ${(s * 100).toFixed(0)}%`);
+    if (hasData) meta.age_list.forEach((k, i) => { if (f.ages.has(k)) s += (ageArr[i] || 0) / 1000; });
+    activeAud.push(hasData ? s : 0.5);
+    if (hasData && s > 0.05) reasons.push(`目标年龄占比 ${(s * 100).toFixed(0)}%`);
   }
   if (f.cities.length) {
     const flat = K("city") || [];
+    const hasData = flat.some((v, i) => i % 2 === 1 && (v || 0) > 0);
     const cm = {};
     for (let i = 0; i + 1 < flat.length; i += 2) cm[flat[i]] = (flat[i + 1] || 0) / 1000;
     let s = 0;
     for (const c of f.cities) s += cm[c] || 0;
-    activeAud.push(s);
-    if (s > 0.05) reasons.push(`覆盖目标城市 ${(s * 100).toFixed(0)}%`);
+    activeAud.push(hasData ? s : 0.5);
+    if (hasData && s > 0.05) reasons.push(`覆盖目标城市 ${(s * 100).toFixed(0)}%`);
   }
   comps.audience = activeAud.length ? activeAud.reduce((a, b) => a + b, 0) / activeAud.length : 0.5;
 
   // 3) 性别偏好
+  const hasGender = (male + female) > 0;
   if (f.gender === "female") {
-    comps.gender = female;
-    if (female > 0.7) reasons.push(`女粉占比 ${(female * 100).toFixed(0)}%`);
+    comps.gender = hasGender ? female : 0.5;
+    if (hasGender && female > 0.7) reasons.push(`女粉占比 ${(female * 100).toFixed(0)}%`);
   } else if (f.gender === "male") {
-    comps.gender = male;
-    if (male > 0.7) reasons.push(`男粉占比 ${(male * 100).toFixed(0)}%`);
+    comps.gender = hasGender ? male : 0.5;
+    if (hasGender && male > 0.7) reasons.push(`男粉占比 ${(male * 100).toFixed(0)}%`);
   } else {
     comps.gender = 0.5;
   }
 
-  // 4) 互动质量（互动率百分位）
-  comps.engagement = ctx.engPct(K("eng") || 0);
+  // 4) 互动质量（互动率百分位；缺数据按中性 0.5 处理）
+  const engVal = K("eng") || 0;
+  comps.engagement = engVal > 0 ? ctx.engPct(engVal) : 0.5;
   if (comps.engagement >= 0.7) reasons.push("互动率优于大盘");
 
-  // 5) 更新活跃（近 30 天笔记数百分位）
-  comps.activity = ctx.notePct(K("notes30") || 0);
+  // 5) 更新活跃（近 30 天笔记数百分位；缺数据按中性 0.5 处理）
+  const notesVal = K("notes30") || 0;
+  comps.activity = notesVal > 0 ? ctx.notePct(notesVal) : 0.5;
   if (comps.activity >= 0.7) reasons.push("近期更新活跃");
 
   // 6) 性价比（CPE 越低越优）
   const cImg = K("c_img") || 0, cVid = K("c_video") || 0;
   const cpeVal = (cImg > 0 && cVid > 0) ? Math.min(cImg, cVid) : Math.max(cImg, cVid);
-  comps.cpe = 1 - ctx.cpePct(cpeVal || 0);
+  comps.cpe = cpeVal > 0 ? 1 - ctx.cpePct(cpeVal) : 0.5;
   if (comps.cpe >= 0.7) reasons.push("互动成本（CPE）较低");
 
   let score = 0;
