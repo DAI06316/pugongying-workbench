@@ -1,6 +1,6 @@
 # 蒲公英达人工作台（小红书版）
 
-给广告代理用的小红书「蒲公英」博主筛选/匹配工作台基础骨架。对标原抖音星图版 `q3-xingtu-workbench` 的流程，做了模块化、可解释打分和图文/视频双报价口径。
+给广告代理用的小红书「蒲公英」博主筛选/匹配工作台。已接入「乾派文化」MCN 小红书刊例 277 位博主。对标原抖音星图版 `q3-xingtu-workbench` 的流程，做了模块化、可解释打分和图文/视频双报价口径。
 
 ## 怎么打开（无需服务器）
 
@@ -14,7 +14,7 @@
 - 可配置打分：每个维度归一化到 0~1 再加权，权重集中在 `js/config.js`，可解释、可校准。
 - 图文 / 视频双报价口径 + CPE + 互动率 + 近 30 天笔记数。
 - 完整交互：智能匹配、精细化筛选、行业垂类、排序、详情弹窗、CSV / 报告导出。
-- 示例数据生成器（同时是接入真实数据的字段模板）。
+- MCN 刊例导入器（`scripts/import_mcn.py`，Excel → 标准数据）+ 示例数据生成器。
 
 ## 目录结构
 
@@ -27,6 +27,7 @@ js/match.js           打分引擎（纯函数）
 js/ui.js              筛选器 / 结果 / 弹窗 / 洞察 / 导出
 js/main.js            启动编排
 scripts/generate-sample-data.mjs  示例数据生成器
+scripts/import_mcn.py           MCN 刊例 Excel 导入器
 data/data-full.js     博主主库（script 注入，file:// 可读）
 data/insights.js      行业洞察（script 注入）
 data/data-full.json   同内容的 JSON（供 ETL 参考 / HTTP 拉取）
@@ -34,13 +35,23 @@ data/insights.json    同内容的 JSON
 docs/data-schema.md   字段口径 + 蒲公英资源库搭建方案
 ```
 
+## 导入 MCN 刊例（扩展资源库）
+
+```bash
+# 依赖运行时 Python；把 Excel 路径换成实际文件
+python3 scripts/import_mcn.py "某MCN刊例.xlsx" -o data
+```
+
+导入器会读取小红书表 → 映射 24 个标准字段 → 打行业 `vmask` → 计算画像分档/CPE 估值 → 输出 `data/data-full.{json,js}` 与 `data/insights.{json,js}`。
+多个 MCN 只需依次导入，再按 `home_url` 去重合并即可持续扩展资源库。
+
 ## 重新生成示例数据
 
 ```bash
 node scripts/generate-sample-data.mjs   # 默认 2000 条，可 DEMO_TOTAL=10000 放大
 ```
 
-> 若本机没有 `node`，这一步可跳过——仓库里已经带好了一份生成好的数据。
+> 若本机没有 `node`，这一步可跳过——仓库里已经带好了一份真实 MCN 数据。
 
 ## 接入真实蒲公英数据
 
