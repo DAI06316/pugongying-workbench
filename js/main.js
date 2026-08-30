@@ -6,7 +6,7 @@
 (function () {
   const state = createState();
   const el = (id) => document.getElementById(id);
-  const CACHE_VER = "2026-08-30-demo";
+  const CACHE_VER = "2026-08-30-mcn-v1";
 
   function setProgress(pct, text) {
     el("load-status-text").textContent = text || `加载达人数据 ${Math.round(pct)}%`;
