@@ -256,7 +256,7 @@ function openModal(idx) {
     <div class="modal-head">
       <div>
         <div style="font-size:18px;font-weight:800;color:var(--ink-1)">${escapeHTML(name)}</div>
-        <div class="kv">星图 ID：<b>${escapeHTML(id)}</b> · 身份：<b>${escapeHTML(identity)}</b>${mcn ? ` · MCN：<b>${escapeHTML(mcn)}</b>` : ""}</div>
+        <div class="kv">小红书ID：<b>${escapeHTML(id)}</b> · 身份：<b>${escapeHTML(identity)}</b>${mcn ? ` · MCN：<b>${escapeHTML(mcn)}</b>` : ""}</div>
       </div>
       <button class="close" onclick="closeModal(event)">✕</button>
     </div>
@@ -325,7 +325,7 @@ function exportCSV(topN) {
   if (!list.length) { alert("暂无匹配博主，无法导出"); return; }
   const { meta, decoded } = state;
   const f = state.filters;
-  const header = ["排名", "匹配度", "是否垂类", "昵称", "蒲公英ID", "身份", "MCN", "人设", "内容维度", "粉丝量级", "一级标签",
+  const header = ["排名", "匹配度", "是否垂类", "昵称", "小红书ID", "身份", "MCN", "人设", "内容维度", "粉丝量级", "一级标签",
     "图文报价", "视频报价", "图文CPE", "视频CPE", "男粉占比", "女粉占比", "iPhone占比", "粉丝数", "近30天笔记", "匹配理由", "小红书主页", "蒲公英主页"];
   const rows = list.map((s, i) => {
     const r = decoded.records[s.idx], K = decoded.key;
