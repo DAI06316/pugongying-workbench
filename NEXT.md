@@ -1,6 +1,6 @@
 # 下次继续 · 待办清单
 
-> 这是「蒲公英达人工作台」的续作清单。当前基础骨架 + 2000 条示例数据已保存，可直接打开 `index.html` 查看。
+> 这是「蒲公英达人工作台」的续作清单。当前已接入「乾派文化」MCN 小红书刊例 277 位博主（真实数据），线上地址：https://dai06316.github.io/pugongying-workbench/
 
 ## 当前状态（已完成）
 
@@ -9,12 +9,12 @@
 - 智能匹配（品类预设 + 关键词兜底）
 - 打分引擎（`js/match.js`，可配置权重）+ 主线程匹配
 - 结果排序 / 分页 / 详情弹窗 / 行业洞察 / 策略 / CSV 与报告导出
-- 数据生成器 `scripts/generate-sample-data.mjs`（2000 条示例）
+- MCN 刊例导入器 `scripts/import_mcn.py` + 示例数据生成器 `scripts/generate-sample-data.mjs`
 
 ## 待完善（按优先级）
 
 ### P0 数据接入（最影响“准”）
-1. 从蒲公英后台导真实「博主刊例」→ 按 `docs/data-schema.md` 的 24 字段补齐。
+1. ✅ 已导入「乾派文化」277 位博主；待补粉丝画像（男女/年龄/城市/人群/iPhone）与近 30 天互动、笔记数。
 2. 补粉丝画像（男女/年龄/城市/人群/iPhone）与近 30 天互动、笔记数。
 3. 按 `js/config.js` 的 `VERTICAL_TAG_MAP` 打行业垂类 `vmask`。
 4. 用真实报价÷互动量算 CPE；重算 `insights.json` 的 stats/趋势/选题。
