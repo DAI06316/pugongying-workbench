@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>蒲公英达人智能匹配工作台 · 小红书</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar glass">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="logo">蒲</span>
+      <div>
+        <div class="brand-name">蒲公英达人工作台</div>
+        <div class="brand-sub">小红书 · 让代理最快找到适配博主</div>
+      </div>
+    </div>
+    <div class="load-status" id="load-status">
+      <span class="loader" id="load-loader"></span>
+      <span id="load-status-text">加载达人数据 0%</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>最快 <span class="accent">3 分钟</span>找到适配的小红书博主</h1>
+    <p>输入品牌 / 产品品类，或按行业、粉丝画像、目标人群与预算精细化筛选，一键导出可直接给客户使用的博主名单与投放策略。</p>
+    <div class="hero-stats">
+      <div class="stat"><b id="pool-total">-</b><span>全量博主池</span></div>
+      <div class="stat"><b id="pool-industries">-</b><span>行业垂类</span></div>
+      <div class="stat"><b>图文 / 视频</b><span>双报价口径</span></div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <aside class="filter-panel card">
+      <div class="filter-head"><h2>匹配条件</h2><button class="link-btn" id="reset-btn">重置</button></div>
+
+      <div class="smart-box">
+        <label class="field">
+          <span>品牌 / 客户名称</span>
+          <input type="text" id="f-client" placeholder="如：某护肤品牌" />
+        </label>
+        <label class="field">
+          <span>产品品类</span>
+          <input type="text" id="f-category" list="category-suggestions" placeholder="如：精华 / 面霜" />
+          <datalist id="category-suggestions"></datalist>
+        </label>
+        <button class="btn-primary" id="smart-btn">✨ 一键智能匹配</button>
+        <div class="smart-hint" id="smart-hint"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>行业垂类</div>
+        <select id="f-industry"></select>
+        <label class="check"><input type="checkbox" id="f-only-vertical" /> 仅展示行业垂类博主</label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>博主身份</div>
+        <div class="chips" id="f-identity"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>内容形式</div>
+        <div class="chips" id="f-content-type"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>粉丝量级</div>
+        <div class="chips" id="f-tier"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>人设 / 风格</div>
+        <div class="chips" id="f-persona"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>内容维度</div>
+        <div class="chips" id="f-dim"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>目标人群</div>
+        <div class="chips" id="f-crowd"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>粉丝年龄</div>
+        <div class="chips" id="f-age"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>目标城市</div>
+        <input type="text" id="f-city" placeholder="上海 北京 广州（空格分隔）" />
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>性别偏好</div>
+        <div class="chips" id="f-gender"></div>
+      </div>
+
+      <div class="filter-group two-col">
+        <label class="field"><span>预算下限（元）</span><input type="number" id="f-price-min" placeholder="不限" /></label>
+        <label class="field"><span>预算上限（元）</span><input type="number" id="f-price-max" placeholder="不限" /></label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title"><span class="dot"></span>博主昵称搜索</div>
+        <input type="text" id="f-search" placeholder="输入昵称关键词" />
+      </div>
+
+      <button class="btn-primary btn-block" id="match-btn">🚀 立即匹配</button>
+    </aside>
+
+    <section class="results">
+      <div class="insights card" id="insights-panel"></div>
+
+      <div class="summary card">
+        <div class="summary-item"><b id="match-count">0</b><span>匹配博主</span></div>
+        <div class="summary-item"><b id="vertical-count">0</b><span>垂类命中</span></div>
+        <div class="summary-item"><b id="avg-score">-</b><span>平均匹配度</span></div>
+        <div class="summary-item"><b id="median-price">-</b><span>中位报价</span></div>
+        <div class="summary-actions">
+          <select id="sort-by"></select>
+          <button class="btn-ghost" id="export-csv">📥 导出 CSV</button>
+          <button class="btn-primary" id="export-report">📄 导出报告</button>
+        </div>
+      </div>
+
+      <div class="strategy card" id="strategy-panel"></div>
+
+      <div id="results-grid" class="results-grid"></div>
+      <div class="empty card hidden" id="empty">暂无匹配博主，请尝试放宽筛选条件。</div>
+
+      <div class="pagination" id="pagination-wrap">
+        <div id="pagination"></div>
+        <div class="page-meta" id="pagination-meta"></div>
+      </div>
+    </section>
+  </section>
+
+  <section class="guide card" id="guide">
+    <h2>使用说明 & 数据口径</h2>
+    <div class="guide-grid">
+      <div>
+        <h3>🎯 三种使用方式</h3>
+        <ol>
+          <li><b>智能匹配</b>：输入品牌 + 产品品类，按预设模板一键回填筛选；</li>
+          <li><b>精细化筛选</b>：手动组合行业 / 身份 / 内容形式 / 量级 / 人设 / 维度 / 人群 / 年龄 / 城市 / 性别 / 预算；</li>
+          <li><b>行业垂类</b>：勾选「仅展示行业垂类博主」只看打标命中的垂类；不勾选则全量参与、垂类优先。</li>
+        </ol>
+        <h3>📤 导出</h3>
+        <ul>
+          <li>「导出 CSV」：当前结果全部导出（匹配度 / 报价 / 画像）；</li>
+          <li>「导出报告」：Top 30 + 品牌 / 品类 / 趋势 / 策略 / 选题，客户可直接使用。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>📖 数据说明</h3>
+        <ul>
+          <li>数据源：小红书蒲公英后台「博主刊例」全量 <span id="guide-total">-</span> 位博主（示例数据）；</li>
+          <li>行业垂类依据博主一级内容标签打标（可在 <code>js/config.js</code> 校准映射）；</li>
+          <li>报价为参考值，最终以蒲公英平台为准；粉丝画像来自平台公开数据。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-mask" id="detail-modal" onclick="closeModal(event)">
+  <div class="modal-body" onclick="event.stopPropagation()"><div id="modal-content"></div></div>
+</div>
+
+<footer>© 2026 小红书蒲公英 · 达人工作台（基础骨架）｜数据仅供参考，实际以蒲公英平台为准</footer>
+
+<script src="data/data-full.js"></script>
+<script src="data/insights.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/match.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

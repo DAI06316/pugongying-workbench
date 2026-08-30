@@ -1,0 +1,11 @@
+{
+  "name": "pugongying-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "小红书蒲公英达人智能匹配工作台（基础骨架）",
+  "scripts": {
+    "gen:demo": "node scripts/generate-sample-data.mjs",
+    "preview": "open index.html"
+  }
+}
